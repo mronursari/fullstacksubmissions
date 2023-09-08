@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const Person = ({person}) => {
   return(
@@ -13,7 +13,7 @@ const Persons = ({personsToShow}) => {
   return(
     <div>
         {personsToShow.map((person) => <Person key= {person.name} person={person}/>)}
-      </div>
+    </div>
   )
 }
 
@@ -57,10 +57,9 @@ const App = () => {
   const [searchedName, setSearchedName] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService.getInitialList()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -76,7 +75,11 @@ const App = () => {
     if(!sameName)
     {
       const newPerson = { name: newName, number: newNumber}
-      setPersons(persons.concat(newPerson))
+
+      personService.addNewPerson(newPerson)
+        .then(newPerson => {
+          setPersons(persons.concat(newPerson))
+        })
     }
     else
     {
