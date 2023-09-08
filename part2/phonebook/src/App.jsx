@@ -77,12 +77,25 @@ const Notification = ({ message }) => {
   )
 }
 
+const ErrorNotification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchedName, setSearchedName] = useState('')
   const [addedNote, setAddedNote] = useState(null)
+  const [addedError, setAddedError] = useState(null)
 
   useEffect(() => {
     personService.getInitialList()
@@ -120,6 +133,12 @@ const App = () => {
           setPersons(persons.map(person => person.name !== newName ? person : response))
         }
         )
+        .catch(error => {
+          setAddedError(`Information of ${replacedPerson.name} already removed from server`)
+          setTimeout(() => {
+            setAddedError(null)
+          }, 5000)
+        })
       }
     }
 
@@ -168,6 +187,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={addedNote}/>
+      <ErrorNotification message={addedError}/>
       <Filter searchedName={searchedName} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
