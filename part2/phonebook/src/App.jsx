@@ -65,11 +65,24 @@ const PersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumb
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='note'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchedName, setSearchedName] = useState('')
+  const [addedNote, setAddedNote] = useState(null)
 
   useEffect(() => {
     personService.getInitialList()
@@ -94,6 +107,7 @@ const App = () => {
       personService.addNewPerson(newPerson)
         .then(newPerson => {
           setPersons(persons.concat(newPerson))
+          handleNoteDisplay(newPerson.name)
         })
     }
     else
@@ -138,11 +152,22 @@ const App = () => {
       })
   }
 
+  const handleNoteDisplay = (name) =>
+  {
+    setAddedNote(
+      `Added ${name} to phonebook`
+    )
+    setTimeout(() => {
+      setAddedNote(null)
+    }, 5000)
+  }
+
   const personsToShow = persons.filter((person) => person.name.toLowerCase().includes(searchedName.toLowerCase()))
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={addedNote}/>
       <Filter searchedName={searchedName} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
