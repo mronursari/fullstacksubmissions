@@ -1,18 +1,33 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const Person = ({person}) => {
+const DeleteButton = ({person, deletePerson}) => {
+
+  const handleDeletion = () => {
+    if(window.confirm("Do you want to delete " + person.name + "?"))
+    {
+      deletePerson(person.id)
+    }
+
+  }
+
+  return(
+    <button onClick={handleDeletion}>Delete</button>
+  )
+}
+
+const Person = ({person, deletePerson}) => {
   return(
     <p>
-      {person.name} {person.number}
+      {person.name} {person.number} <DeleteButton person={person} deletePerson={deletePerson}/>
     </p>
   )
 }
 
-const Persons = ({personsToShow}) => {
+const Persons = ({personsToShow, deletePerson}) => {
   return(
     <div>
-        {personsToShow.map((person) => <Person key= {person.name} person={person}/>)}
+        {personsToShow.map((person) => <Person key= {person.name} person={person} deletePerson={deletePerson}/>)}
     </div>
   )
 }
@@ -103,6 +118,18 @@ const App = () => {
     setSearchedName(event.target.value)
   }
 
+  const deletePerson = (id) => {
+
+    personService.deletePerson(id)
+      .then(responseData => {
+        console.log('Response is', responseData)
+        personService.getInitialList()
+          .then(initialPersons => {
+            setPersons(initialPersons)
+        })
+      })
+  }
+
   const personsToShow = persons.filter((person) => person.name.toLowerCase().includes(searchedName.toLowerCase()))
 
   return (
@@ -112,7 +139,7 @@ const App = () => {
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} deletePerson={deletePerson}/>
     </div>
   )
 }
