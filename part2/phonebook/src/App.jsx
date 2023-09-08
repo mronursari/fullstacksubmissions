@@ -98,7 +98,15 @@ const App = () => {
     }
     else
     {
-      window.alert(`${newName} is already added to phonebook`)
+      if(window.confirm(newName + " already exists, do you want to replace the number?"))
+      {
+        const replacedPerson = persons.find(person => person.name === newName)
+        const replacedPersonWithNewNo = {...replacedPerson, number: newNumber}
+        personService.replacePerson(replacedPersonWithNewNo).then(response =>{
+          setPersons(persons.map(person => person.name !== newName ? person : response))
+        }
+        )
+      }
     }
 
   }
