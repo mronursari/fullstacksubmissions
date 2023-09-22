@@ -44,8 +44,41 @@ const CountryLanguage = ({country}) => {
   )
 }
 
+const CapitalWeather = ({capitalName}) => {
+
+  const [weather, setWeather] = useState([])
+  const [weatherFound, setWeatherFound] = useState(false)
+
+  useEffect(() => {
+    countryService.getCapitalWeather(capitalName)
+      .then(capitalWeather => {
+        setWeather(capitalWeather)
+        setWeatherFound(true)
+      })
+  }, [])
+
+  if(weatherFound)
+  {
+    return(
+      <>
+        <h3>Weather in {capitalName}</h3>
+        <p>Temperature {Number(weather.main.temp -273.15).toFixed(2)} degrees</p>
+        <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}/>
+        <p>Wind {Number(weather.wind.speed).toFixed(1)} m/s</p>
+      </>
+    )
+  }
+  else
+  {
+    return(
+      <p>
+        Weather information not found
+      </p>
+    )
+  }
+}
+
 const CountryData = ({country}) => {
-  console.log(country)
 
   return(
     <div>
@@ -63,7 +96,9 @@ const CountryData = ({country}) => {
       <div>
         <img src={country.flags.png} alt={country.flags.alt} width={250}/>
       </div>
-
+      <div>
+        <CapitalWeather capitalName={country.capital[0]}/>
+      </div>
     </div>
   )
 }
