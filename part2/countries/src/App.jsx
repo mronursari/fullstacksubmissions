@@ -10,10 +10,32 @@ const SearchBar = ({searchedCountry, handleSearchChange}) => {
   )
 }
 
-const CountryLine = ({countryName}) => {
-  return(
-    <p>{countryName}</p>
-  )
+const CountryLine = ({country}) => {
+
+  const [showDetails, setShowDetails] = useState(false)
+
+  const handleButtonPress = () =>
+  {
+    setShowDetails(!showDetails)
+  }
+
+
+  if(showDetails)
+  {
+    return(
+      <div>
+        <CountryData country={country}/>
+      </div>
+    )
+  }
+  else
+  {
+    return(
+      <p>
+        {country.name.common} <button onClick={handleButtonPress}>Show</button>
+      </p>
+    )
+  }
 }
 
 const CountryLanguage = ({country}) => {
@@ -59,7 +81,7 @@ const CountryDisplay = ({countriesToShow}) => {
   else if(countriesToShow.length > 1)
   {
     return(
-      countriesToShow.map((country) => <CountryLine key= {country.name.common} countryName={country.name.common}/>)
+      countriesToShow.map((country) => <CountryLine key= {country.name.common} country={country}/>)
     )
   }
   else if(countriesToShow.length == 1)
